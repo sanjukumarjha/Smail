@@ -1,0 +1,1793 @@
+this is the code of header.tsx             import React, { useState, useRef, useEffect } from 'react';
+
+import { useNavigate, Link } from 'react-router-dom';
+
+import { Menu, Search, HelpCircle, Settings, Grid3X3, Sun, Moon, X, Mail } from 'lucide-react';
+
+import { useSidebar } from '../contexts/SidebarContext';
+
+import { useTheme } from '../contexts/ThemeContext';
+
+import { useClickOutside } from '../hooks/useClickOutside';
+
+import { useProjects } from '../contexts/ProjectContext'; // Import projects context
+
+import { Project } from '../data/projects'; // Import Project type
+
+
+
+const Header: React.FC = () => {
+
+  const { toggleSidebar } = useSidebar();
+
+  const { theme, toggleTheme } = useTheme();
+
+  const navigate = useNavigate();
+
+  const { projects } = useProjects(); // Get all projects from the context
+
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+
+
+  // --- NEW STATE FOR SEARCH FUNCTIONALITY ---
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchResults, setSearchResults] = useState<Project[]>([]);
+
+  const [isSearchActive, setIsSearchActive] = useState(false);
+
+  
+
+  // Refs for all dropdowns and the search wrapper
+
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  const appsRef = useRef<HTMLDivElement>(null);
+
+  const profileRef = useRef<HTMLDivElement>(null);
+
+
+
+  // --- HOOKS FOR CLOSING MENUS/SEARCH ON OUTSIDE CLICK ---
+
+  useClickOutside(searchRef, () => setIsSearchActive(false));
+
+  useClickOutside(settingsRef, () => activeMenu === 'settings' && setActiveMenu(null));
+
+  useClickOutside(appsRef, () => activeMenu === 'apps' && setActiveMenu(null));
+
+  useClickOutside(profileRef, () => activeMenu === 'profile' && setActiveMenu(null));
+
+
+
+  // --- SEARCH LOGIC EFFECT ---
+
+  useEffect(() => {
+
+    if (searchQuery.trim() !== '') {
+
+      const filteredProjects = projects.filter(project =>
+
+        project.title.toLowerCase().includes(searchQuery.toLowerCase())
+
+      );
+
+      setSearchResults(filteredProjects);
+
+    } else {
+
+      setSearchResults([]);
+
+    }
+
+  }, [searchQuery, projects]);
+
+
+
+  const handleMenuToggle = (menuName: string) => {
+
+    setActiveMenu(activeMenu === menuName ? null : menuName);
+
+  };
+
+
+
+  const handleThemeChange = (selectedTheme: 'light' | 'dark') => {
+
+    if (theme !== selectedTheme) {
+
+      toggleTheme();
+
+    }
+
+  };
+
+
+
+  const handleSupportClick = () => {
+
+    navigate('/contact');
+
+  };
+
+
+
+  const handleNavigateToAbout = () => {
+
+    navigate('/about');
+
+    setActiveMenu(null);
+
+  };
+
+  
+
+  // --- HANDLERS FOR SEARCH ACTIONS ---
+
+  const handleResultClick = (projectId: string) => {
+
+    navigate(`/project/${projectId}`);
+
+    setSearchQuery('');
+
+    setIsSearchActive(false);
+
+  };
+
+
+
+  const clearSearch = () => {
+
+    setSearchQuery('');
+
+    // We can keep the search active to allow for a new search
+
+    // or set it to false to close the dropdown immediately.
+
+    // Keeping it active is often better UX.
+
+  };
+
+
+
+  return (
+
+    <header className="header">
+
+      <div className="header__left">
+
+        <button className="header__icon-btn" onClick={toggleSidebar} aria-label="Toggle sidebar">
+
+          <Menu size={24} />
+
+        </button>
+
+        <Link to="/" className="header__logo">
+
+          <img src="/logo.png" alt="Logo" className="header__logo-img" />
+
+          <span className="header__logo-text">Smail</span>
+
+        </Link>
+
+      </div>
+
+
+
+      <div className="header__center">
+
+        <div className="header__search-wrapper" ref={searchRef}>
+
+          <div className={`header__search ${isSearchActive ? 'active' : ''}`}>
+
+            <Search className="header__search-icon" size={20} />
+
+            <input 
+
+              type="text" 
+
+              placeholder="Search Projects" 
+
+              className="header__search-input"
+
+              value={searchQuery}
+
+              onChange={(e) => setSearchQuery(e.target.value)}
+
+              onFocus={() => setIsSearchActive(true)}
+
+            />
+
+            {searchQuery && (
+
+              <button type="button" className="header__search-clear-btn" onClick={clearSearch}>
+
+                <X size={20} />
+
+              </button>
+
+            )}
+
+          </div>
+
+
+
+          {isSearchActive && searchQuery && (
+
+            <div className="search-results-dropdown">
+
+              {searchResults.length > 0 && (
+
+                searchResults.map(project => (
+
+                  <button key={project.id} className="search-result-item" onClick={() => handleResultClick(project.id)}>
+
+                    <Mail size={18} className="search-result-icon" />
+
+                    <span className="search-result-text">{project.title}</span>
+
+                  </button>
+
+                ))
+
+              )}
+
+              {searchResults.length === 0 && (
+
+                <div className="search-result-item no-results">
+
+                  No projects found for "{searchQuery}"
+
+                </div>
+
+              )}
+
+              <div className="search-result-item all-results-link">
+
+                  <Search size={18} className="search-result-icon" />
+
+                  <span>All search results for "{searchQuery}"</span>
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
+
+
+
+      <div className="header__right">
+
+        <button className="header__search-btn--mobile" aria-label="Search">
+
+          <Search size={24} />
+
+        </button>
+
+        <button className="header__icon-btn" aria-label="Support" onClick={handleSupportClick}>
+
+          <HelpCircle size={24} />
+
+        </button>
+
+        
+
+        <div className="header__dropdown-container" ref={settingsRef}>
+
+          <button className="header__icon-btn" onClick={() => handleMenuToggle('settings')} aria-label="Settings">
+
+            <Settings size={24} />
+
+          </button>
+
+          {activeMenu === 'settings' && (
+
+            <div className="header__dropdown header__dropdown--settings">
+
+              <div className="settings-header">
+
+                Quick Settings
+
+              </div>
+
+              <div className="settings-section">
+
+                <span className="settings-section-title">THEME</span>
+
+                <div className="theme-options-card">
+
+                  <div className="theme-options-card__header">
+
+                    <h4 className="theme-options-card__title">Appearance</h4>
+
+                    <p className="theme-options-card__subtitle">Customize how the portfolio looks</p>
+
+                  </div>
+
+                  <div className="theme-options-buttons">
+
+                    <button
+
+                      className={`theme-option ${theme === 'light' ? 'active' : ''}`}
+
+                      onClick={() => handleThemeChange('light')}
+
+                    >
+
+                      <Sun size={18} /> Light
+
+                    </button>
+
+                    <button
+
+                      className={`theme-option ${theme === 'dark' ? 'active' : ''}`}
+
+                      onClick={() => handleThemeChange('dark')}
+
+                    >
+
+                      <Moon size={18} /> Dark
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+
+
+        <div className="header__dropdown-container" ref={appsRef}>
+
+          <button className="header__icon-btn" onClick={() => handleMenuToggle('apps')} aria-label="Apps">
+
+            <Grid3X3 size={24} />
+
+          </button>
+
+          {activeMenu === 'apps' && (
+
+            <div className="header__dropdown header__dropdown--apps">
+
+              <div className="header__apps-grid">
+
+                <a href="https://github.com/sanjukumarjha" target="_blank" rel="noopener noreferrer" className="app-grid-item">
+
+                  <img src="/github-6980894.svg" alt="GitHub" className="app-grid-icon" />
+
+                  <span className="app-grid-label">GitHub</span>
+
+                </a>
+
+                <a href="https://linkedin.com/in/sanjukumarjha" target="_blank" rel="noopener noreferrer" className="app-grid-item">
+
+                  <img src="/linked-in-2674741.svg" alt="LinkedIn" className="app-grid-icon" />
+
+                  <span className="app-grid-label">LinkedIn</span>
+
+                </a>
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+
+
+        <div className="header__dropdown-container" ref={profileRef}>
+
+          <button className="header__profile-btn" onClick={() => handleMenuToggle('profile')} aria-label="Profile">
+
+            <img src="/DP.jpg" alt="Profile" className="header__avatar-img" />
+
+          </button>
+
+          {activeMenu === 'profile' && (
+
+            <div className="header__dropdown header__dropdown--profile">
+
+              <div className="header__profile-info" onClick={handleNavigateToAbout}>
+
+                <img src="/DP.jpg" alt="Profile" className="header__profile-dropdown-img" />
+
+                <strong>Sanju Kumar Jha</strong>
+
+                <span>rjriva00@gmail.com</span>
+
+              </div>
+
+              <div className="header__dropdown-divider"></div>
+
+              <button className="header__dropdown-item">Sign out</button>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
+
+    </header>
+
+  );
+
+};
+
+
+
+export default Header;                                     This is the code if sidebar.tsx                               import React from 'react';
+
+import { NavLink } from 'react-router-dom';
+
+import { Download, Inbox, Star, Briefcase, Code, Mail, Archive } from 'lucide-react';
+
+import { useSidebar } from '../contexts/SidebarContext';
+
+import { useProjects } from '../contexts/ProjectContext'; // Import useProjects
+
+
+
+const Sidebar: React.FC = () => {
+
+  const { isCollapsed } = useSidebar();
+
+  const { projects } = useProjects(); // Get projects from context
+
+
+
+  // Check if there is at least one archived project
+
+  const hasArchivedProjects = projects.some(project => project.isArchived);
+
+
+
+  const handleResumeDownload = () => {
+
+    const link = document.createElement('a');
+
+    link.href = '/Sanju_Kumar_Jha_Resume (4).pdf';
+
+    link.download = 'Sanju_Kumar_Jha_Resume.pdf';
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+  };
+
+
+
+  const navItems = [
+
+    { icon: Inbox, label: 'Projects', path: '/projects' },
+
+    { icon: Star, label: 'Starred', path: '/starred' },
+
+    { icon: Briefcase, label: 'Experience', path: '/experience' },
+
+    { icon: Code, label: 'Skills', path: '/skills' },
+
+    { icon: Mail, label: 'Contact', path: '/contact' },
+
+  ];
+
+
+
+  return (
+
+    <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''}`}>
+
+      <div className="sidebar__compose">
+
+        <button className="sidebar__compose-btn" onClick={handleResumeDownload}>
+
+          <Download size={20} />
+
+          {!isCollapsed && <span>Resume</span>}
+
+        </button>
+
+      </div>
+
+      <nav className="sidebar__nav">
+
+        {navItems.map((item) => {
+
+          const Icon = item.icon;
+
+          return (
+
+            <NavLink
+
+              key={item.path}
+
+              to={item.path}
+
+              className={({ isActive }) => `sidebar__nav-item ${isActive ? 'sidebar__nav-item--active' : ''}`}
+
+            >
+
+              <Icon size={20} />
+
+              {!isCollapsed && <span>{item.label}</span>}
+
+            </NavLink>
+
+          );
+
+        })}
+
+
+
+        {/* --- CONDITIONALLY RENDER THE ARCHIVED LINK --- */}
+
+        {hasArchivedProjects && (
+
+          <NavLink
+
+            to="/archived"
+
+            className={({ isActive }) => `sidebar__nav-item ${isActive ? 'sidebar__nav-item--active' : ''}`}
+
+          >
+
+            <Archive size={20} />
+
+            {!isCollapsed && <span>Archived</span>}
+
+          </NavLink>
+
+        )}
+
+      </nav>
+
+    </aside>
+
+  );
+
+};
+
+
+
+export default Sidebar;                            This is the code of maincontentlayout.tsx                               import React, { useState, useEffect, useRef } from 'react';
+
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+
+import { 
+
+  Inbox, Info, Briefcase, Mail, Code, Square, CheckSquare, RefreshCw, MoreVertical, Share2, MailOpen, Archive
+
+} from 'lucide-react';
+
+import { useProjects } from '../contexts/ProjectContext';
+
+
+
+const MainContentLayout: React.FC = () => {
+
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const { 
+
+    projects, selectedProjects, toggleSelectAll, isAllSelected, 
+
+    markAllAsRead, archiveSelected  
+
+  } = useProjects();
+
+
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+
+
+  useEffect(() => {
+
+    const handleClickOutside = (event: MouseEvent) => {
+
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+
+        setIsMenuOpen(false);
+
+      }
+
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+  }, []);
+
+
+
+  const handleMarkAllReadClick = () => {
+
+    markAllAsRead();
+
+    setIsMenuOpen(false);
+
+  };
+
+
+
+  const handleArchiveSelectedClick = () => {
+
+    archiveSelected();
+
+    setIsMenuOpen(false);
+
+  };
+
+  
+
+  const handleShareClick = () => {
+
+    const selected = projects.filter(p => selectedProjects.includes(p.id));
+
+    if (selected.length === 0) return;
+
+    const shareText = selected.map(p => `${p.title}: ${window.location.origin}/project/${p.id}`).join('\n');
+
+    if (navigator.share) {
+
+      navigator.share({ title: 'Check out these projects', text: shareText });
+
+    } else {
+
+      navigator.clipboard.writeText(shareText);
+
+      alert('Selected project links copied to clipboard!');
+
+    }
+
+  };
+
+
+
+  const tabs = [
+
+    { name: 'Projects', path: '/projects', icon: Inbox, subtitle: '' },
+
+    { name: 'About', path: '/about', icon: Info, subtitle: 'Who I am?' },
+
+    { name: 'Experience', path: '/experience', icon: Briefcase, subtitle: 'My career journey' },
+
+    { name: 'Skills', path: '/skills', icon: Code, subtitle: 'My technical toolkit' },
+
+    { name: 'Contact', path: '/contact', icon: Mail, subtitle: 'How to reach me?' },
+
+  ];
+
+  
+
+  const getActiveTabPath = () => {
+
+    if (location.pathname.startsWith('/project/')) return '/projects';
+
+    if (location.pathname === '/') return '/projects';
+
+    return location.pathname;
+
+  };
+
+  
+
+  const activeTabPath = getActiveTabPath();
+
+
+
+  return (
+
+    <div className="page">
+
+      <div className="inbox-toolbar">
+
+        <div className="inbox-toolbar__left">
+
+          <button className="header__icon-btn" onClick={toggleSelectAll} title="Select all">
+
+            {isAllSelected ? <CheckSquare size={18} /> : <Square size={18} />}
+
+          </button>
+
+          {selectedProjects.length > 0 && (
+
+            <button className="header__icon-btn" onClick={handleShareClick} title="Share">
+
+              <Share2 size={18} />
+
+            </button>
+
+          )}
+
+          <button className="header__icon-btn" title="Refresh"><RefreshCw size={18} /></button>
+
+          <div className="more-options-container" ref={menuRef}>
+
+            <button className="header__icon-btn" onClick={() => setIsMenuOpen(prev => !prev)}><MoreVertical size={20} /></button>
+
+            {isMenuOpen && (
+
+              <div className="dropdown-menu">
+
+                {selectedProjects.length === 0 ? (
+
+                  <>
+
+                    <button onClick={handleMarkAllReadClick} className="dropdown-item"><MailOpen size={18} /> Mark all as read</button>
+
+                    <div className="dropdown-divider"></div>
+
+                    <div className="dropdown-item-disabled">Select projects to see more actions</div>
+
+                  </>
+
+                ) : (
+
+                  <>
+
+                    <button onClick={handleArchiveSelectedClick} className="dropdown-item"><Archive size={18} /> Archive selected</button>
+
+                  </>
+
+                )}
+
+              </div>
+
+            )}
+
+          </div>
+
+        </div>
+
+        <div className="inbox-toolbar__right">
+
+          <span className="pagination-text">1–{projects.filter(p => !p.isArchived).length} of {projects.filter(p => !p.isArchived).length}</span>
+
+        </div>
+
+      </div>
+
+      <div className="page__header"><div className="tabs">
+
+          {tabs.map((tab) => {
+
+            const Icon = tab.icon;
+
+            const isActive = activeTabPath === tab.path;
+
+            return (
+
+              <div key={tab.name} className={`tab ${isActive ? 'active' : ''}`} onClick={() => navigate(tab.path)}>
+
+                <Icon size={18} className="tab__icon" />
+
+                <div className="tab__content">
+
+                  <span className="tab__title">{tab.name}</span>
+
+                  <span className="tab__subtitle">{tab.subtitle}</span>
+
+                </div>
+
+              </div>
+
+            );
+
+          })}
+
+      </div></div>
+
+      <Outlet />
+
+    </div>
+
+  );
+
+};
+
+
+
+export default MainContentLayout;            this is the code of layout.tsx                                   import React, { ReactNode } from 'react';
+
+import Header from './Header';
+
+import Sidebar from './Sidebar';
+
+import Notification from './Notification';
+
+import { usePendingNotification } from '../contexts/ProjectContext'; // Import the new hook
+
+
+
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+  // This hook will now run on every navigation and handle showing pending notifications.
+
+  usePendingNotification();
+
+
+
+  return (
+
+    <div className="layout">
+
+      <Header />
+
+      <div className="layout__body">
+
+        <Sidebar />
+
+       <main className="layout__main">
+
+          {children}
+
+        </main>
+
+      </div>
+
+      <Notification /> {/* The Notification component remains here to display the UI */}
+
+    </div>
+
+  );
+
+};
+
+
+
+export default Layout;
+
+                this is the code of projectlist.tsx                            import React from 'react';
+
+import { Star, Mail, Share2, Square, CheckSquare } from 'lucide-react';
+
+import { Project } from '../data/projects';
+
+import { useProjects } from '../contexts/ProjectContext';
+
+
+
+interface ProjectListProps {
+
+  projects: Project[];
+
+  onProjectClick: (projectId: string) => void;
+
+}
+
+
+
+const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectClick }) => {
+
+  const { toggleStar, toggleSelect, selectedProjects = [], toggleReadStatus } = useProjects();
+
+
+
+  // Helper function to safely render content that might be an object
+
+  const safeRender = (content: any): React.ReactNode => {
+
+    if (typeof content === 'object' && content !== null) {
+
+      if (content.message) {
+
+        return content.message;
+
+      }
+
+      return JSON.stringify(content);
+
+    }
+
+    return content;
+
+  };
+
+  
+
+  // Helper function to ensure content is a string, for APIs like navigator.share
+
+  const safeStringify = (content: any): string => {
+
+    if (typeof content === 'string') return content;
+
+    if (typeof content === 'object' && content !== null) {
+
+      return content.message ? String(content.message) : JSON.stringify(content);
+
+    }
+
+    return String(content);
+
+  };
+
+
+
+
+
+  const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+
+    e.stopPropagation(); // Prevent row click when an icon is clicked
+
+    action();
+
+  };
+
+  
+
+  const handleShareClick = (e: React.MouseEvent, project: Project) => {
+
+      e.stopPropagation();
+
+      if (navigator.share) {
+
+          navigator.share({
+
+              title: safeStringify(project.title),
+
+              text: safeStringify(project.preview), // Share the short preview
+
+              url: `${window.location.origin}/project/${project.id}`
+
+          });
+
+      } else {
+
+          navigator.clipboard.writeText(`${window.location.origin}/project/${project.id}`);
+
+          // Note: alert() might not work in all environments. A custom notification would be better.
+
+          console.log('Project link copied to clipboard!');
+
+      }
+
+  }
+
+
+
+  return (
+
+    <div className="project-list">
+
+      {projects.map((project) => {
+
+        const isSelected = selectedProjects.includes(project.id);
+
+        const rowClass = `project-list__item ${!project.isRead ? 'unread' : ''} ${isSelected ? 'selected' : ''}`;
+
+        
+
+        return (
+
+          <div
+
+            key={project.id}
+
+            className={rowClass}
+
+            onClick={() => onProjectClick(project.id)}
+
+            role="button"
+
+            tabIndex={0}
+
+          >
+
+            <div className="project-list__actions-left">
+
+              <button className="action-btn" title="Select" onClick={(e) => handleActionClick(e, () => toggleSelect(project.id))}>
+
+                {isSelected ? <CheckSquare size={18} className="selected-check" /> : <Square size={18} />}
+
+              </button>
+
+              <button className="action-btn" title="Star" onClick={(e) => handleActionClick(e, () => toggleStar(project.id))}>
+
+                <Star size={18} fill={project.isStarred ? 'currentColor' : 'none'} className={project.isStarred ? 'starred' : ''} />
+
+              </button>
+
+            </div>
+
+
+
+            <div className="project-list__sender">{safeRender(project.title)}</div>
+
+            
+
+            <div className="project-list__subject">
+
+              {safeRender(project.preview)}
+
+              <span className="project-list__subject-preview">
+
+                - {Array.isArray(project.technologies) ? project.technologies.slice(0, 2).join(', ') + '...' : ''}
+
+              </span>
+
+            </div>
+
+
+
+            <div className="project-list__hover-actions">
+
+              <button 
+
+                className="header__icon-btn" 
+
+                title={project.isRead ? "Mark as unread" : "Mark as read"} 
+
+                onClick={(e) => handleActionClick(e, () => toggleReadStatus(project.id))}
+
+              >
+
+                <Mail size={20} />
+
+              </button>
+
+              <button 
+
+                className="header__icon-btn" 
+
+                title="Share"
+
+                onClick={(e) => handleShareClick(e, project)}
+
+              >
+
+                <Share2 size={20} />
+
+              </button>
+
+            </div>
+
+            
+
+            <div className="project-list__date">{safeRender(project.year)}</div>
+
+          </div>
+
+        );
+
+      })}
+
+    </div>
+
+  );
+
+};
+
+
+
+export default ProjectList;
+
+
+
+this is the code of projectdetail.tsx                                 import React, { useEffect, useState, useRef, useCallback } from 'react';
+
+import ReactDOM from 'react-dom';
+
+import { useParams, useNavigate } from 'react-router-dom';
+
+import { 
+
+  ArrowLeft, Archive, Mail, MoreVertical, Printer, ExternalLink, Star, CornerUpLeft, Github, 
+
+  CheckSquare, Filter, Flag, ArchiveRestore, Paperclip, ChevronLeft, ChevronRight, X, Info, Download
+
+} from 'lucide-react';
+
+import { useProjects } from '../contexts/ProjectContext';
+
+import { Project } from '../data/projects';
+
+import { useClickOutside } from '../hooks/useClickOutside';
+
+
+
+// Define a type for the thumbnail's bounding rectangle
+
+interface ThumbnailRect {
+
+  x: number;
+
+  y: number;
+
+  width: number;
+
+  height: number;
+
+}
+
+
+
+const ProjectDetail: React.FC = () => {
+
+  const { id } = useParams<{ id: string }>();
+
+  const navigate = useNavigate();
+
+  
+
+  const { 
+
+    projects, markAsRead, toggleReadStatus, archiveProject, unarchiveProject, toggleStar 
+
+  } = useProjects();
+
+  const [project, setProject] = useState<Project | undefined>(undefined);
+
+  
+
+  const [isToolbarMenuOpen, setIsToolbarMenuOpen] = useState(false);
+
+  const [isSenderMenuOpen, setIsSenderMenuOpen] = useState(false);
+
+  
+
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  
+
+  // --- NEW STATES FOR HERO ANIMATION ---
+
+  const [initialThumbnailRect, setInitialThumbnailRect] = useState<ThumbnailRect | null>(null);
+
+  const [isAnimating, setIsAnimating] = useState(false); // To control the animation phase
+
+  
+
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]); // To get thumbnail positions
+
+  const lightboxImageRef = useRef<HTMLImageElement>(null); // Ref for the image inside the lightbox
+
+  const lightboxOverlayRef = useRef<HTMLDivElement>(null); // Ref for the overlay
+
+
+
+  const toolbarMenuRef = useRef<HTMLDivElement>(null);
+
+  const senderMenuRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(toolbarMenuRef, () => setIsToolbarMenuOpen(false));
+
+  useClickOutside(senderMenuRef, () => setIsSenderMenuOpen(false));
+
+
+
+  useEffect(() => {
+
+    const foundProject = projects.find(p => p.id === id);
+
+    setProject(foundProject);
+
+    thumbnailRefs.current = thumbnailRefs.current.slice(0, foundProject?.screenshots.length || 0); // Cleanup old refs
+
+  }, [id, projects]);
+
+  
+
+  useEffect(() => {
+
+    if (project && !project.isRead) {
+
+      markAsRead(project.id);
+
+    }
+
+  }, [project, markAsRead]);
+
+
+
+  // General handlers
+
+  const handleArchiveClick = () => { if (project) { archiveProject(project.id); navigate('/projects'); } };
+
+  const handleUnarchiveClick = () => {
+
+    if (project) {
+
+      const archivedCount = projects.filter(p => p.isArchived).length;
+
+      unarchiveProject(project.id);
+
+      if (archivedCount === 1) {
+
+        navigate('/projects');
+
+      } else {
+
+        navigate('/archived');
+
+      }
+
+    }
+
+  };
+
+  const handleMarkUnreadClick = () => { if (project) toggleReadStatus(project.id) };
+
+  const handleStarClick = () => { if (project) toggleStar(project.id) };
+
+  const handleReplyClick = () => { if (project) navigate('/contact', { state: { projectTitle: project.title } }); };
+
+
+
+  // --- UPDATED LIGHTBOX FUNCTIONS FOR HERO ANIMATION ---
+
+  const openLightbox = useCallback((index: number, e: React.MouseEvent<HTMLButtonElement>) => {
+
+    if (!project || !project.screenshots || !thumbnailRefs.current[index]) return;
+
+
+
+    const thumbnail = thumbnailRefs.current[index]!;
+
+    const thumbnailRect = thumbnail.getBoundingClientRect();
+
+    
+
+    setInitialThumbnailRect({
+
+      x: thumbnailRect.x,
+
+      y: thumbnailRect.y,
+
+      width: thumbnailRect.width,
+
+      height: thumbnailRect.height,
+
+    });
+
+    
+
+    setCurrentImageIndex(index);
+
+    setIsLightboxOpen(true);
+
+    // Give a very small delay for the DOM to update before starting animation
+
+    setTimeout(() => {
+
+      setIsAnimating(true);
+
+    }, 10); 
+
+  }, [project]);
+
+
+
+  const closeLightbox = useCallback(() => {
+
+    setIsAnimating(false); // Trigger reverse animation
+
+    // Wait for the animation to complete before unmounting
+
+    setTimeout(() => {
+
+      setIsLightboxOpen(false);
+
+      setInitialThumbnailRect(null); // Clear the stored thumbnail position
+
+    }, 400); // This duration should match your CSS transition duration
+
+  }, []);
+
+
+
+  const showNextImage = (e: React.MouseEvent) => {
+
+    e.stopPropagation();
+
+    if (project && project.screenshots) {
+
+      setCurrentImageIndex((prev) => (prev + 1) % project.screenshots.length);
+
+    }
+
+  };
+
+  const showPrevImage = (e: React.MouseEvent) => {
+
+    e.stopPropagation();
+
+    if (project && project.screenshots) {
+
+      setCurrentImageIndex((prev) => (prev - 1 + project.screenshots.length) % project.screenshots.length);
+
+    }
+
+  };
+
+
+
+  // Calculate dynamic transform styles for the lightbox image
+
+  const getLightboxImageTransform = useCallback(() => {
+
+    if (!initialThumbnailRect || !lightboxImageRef.current || !lightboxOverlayRef.current || !isLightboxOpen) {
+
+      return {};
+
+    }
+
+
+
+    const imgElement = lightboxImageRef.current;
+
+    const overlayElement = lightboxOverlayRef.current;
+
+    
+
+    // Get the final position and size of the image within the lightbox
+
+    // This assumes the lightbox image will be centered and respect aspect ratio
+
+    const imgComputedStyle = window.getComputedStyle(imgElement);
+
+    const imgWidth = parseFloat(imgComputedStyle.width);
+
+    const imgHeight = parseFloat(imgComputedStyle.height);
+
+
+
+    // Calculate the centered position of the image within the lightbox overlay
+
+    const finalImageLeft = (overlayElement.offsetWidth - imgWidth) / 2;
+
+    const finalImageTop = (overlayElement.offsetHeight - imgHeight) / 2;
+
+
+
+    // Calculate translation and scale from thumbnail to final position
+
+    const translateX = initialThumbnailRect.x - finalImageLeft;
+
+    const translateY = initialThumbnailRect.y - finalImageTop;
+
+    const scaleX = initialThumbnailRect.width / imgWidth;
+
+    const scaleY = initialThumbnailRect.height / imgHeight;
+
+
+
+    return {
+
+      transform: `translate(${translateX}px, ${translateY}px) scaleX(${scaleX}) scaleY(${scaleY})`,
+
+      transformOrigin: '0 0', // Ensure scaling and translation are from the top-left
+
+      opacity: 0, // Start invisible, fade in
+
+    };
+
+  }, [initialThumbnailRect, isLightboxOpen]);
+
+
+
+
+
+  if (!project) {
+
+    return <div className="page" style={{ padding: '20px' }}>Loading project...</div>;
+
+  }
+
+  
+
+  const lightboxJsx = isLightboxOpen ? (
+
+    <div 
+
+      className={`lightbox-overlay ${isAnimating ? 'is-animating' : ''}`}
+
+      onClick={closeLightbox}
+
+      ref={lightboxOverlayRef} // Attach ref here
+
+    >
+
+      <button className="lightbox-close" onClick={closeLightbox}><X size={32} /></button>
+
+      <button className="lightbox-prev" onClick={showPrevImage}><ChevronLeft size={48} /></button>
+
+      <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+
+        <img 
+
+          src={project.screenshots[currentImageIndex]} 
+
+          alt={`Screenshot ${currentImageIndex + 1}`} 
+
+          className="lightbox-image" 
+
+          ref={lightboxImageRef} // Attach ref here
+
+          style={!isAnimating ? getLightboxImageTransform() : {}} // Apply initial transform only if not animating
+
+          onLoad={() => {
+
+            // Recalculate transform if image aspect ratio might change the final size
+
+            if (!isAnimating) {
+
+                // Force a re-render to apply the transform based on loaded image size
+
+                // This is a bit of a hack, a better way would be to use state for the transform directly
+
+                setInitialThumbnailRect(prev => ({...prev!})); 
+
+            }
+
+          }}
+
+        />
+
+      </div>
+
+      <button className="lightbox-next" onClick={showNextImage}><ChevronRight size={48} /></button>
+
+    </div>
+
+  ) : null;
+
+
+
+  return (
+
+    <div className="page">
+
+      <div className="project-detail-toolbar">
+
+        <div className="project-detail-toolbar__left">
+
+          <button onClick={() => navigate(-1)} className="header__icon-btn" aria-label="Back"><ArrowLeft size={20} /></button>
+
+          <div className="toolbar-divider"></div>
+
+          {project.isArchived ? (
+
+            <button onClick={handleUnarchiveClick} className="header__icon-btn" title="Restore from Archive"><ArchiveRestore size={20} /></button>
+
+          ) : (
+
+            <button onClick={handleArchiveClick} className="header__icon-btn" title="Archive"><Archive size={20} /></button>
+
+          )}
+
+          <button onClick={handleMarkUnreadClick} className="header__icon-btn" aria-label="Mark as unread"><Mail size={20} /></button>
+
+          <div className="more-options-container" ref={toolbarMenuRef}>
+
+            <button onClick={() => setIsToolbarMenuOpen(p => !p)} className="header__icon-btn" aria-label="More options"><MoreVertical size={20} /></button>
+
+            {isToolbarMenuOpen && (
+
+              <div className="header__dropdown">
+
+                <button className="header__dropdown-item"><CheckSquare size={18} /> Add to Tasks</button>
+
+                <div className="header__dropdown-divider"></div>
+
+                <button className="header__dropdown-item"><Filter size={18} /> Filter projects like this</button>
+
+                <button className="header__dropdown-item"><Flag size={18} /> Report Project</button>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div className="project-detail">
+
+        <div className="project-detail-subject-line">
+
+          <h1 className="project-detail__title">{project.title}</h1>
+
+          <div className="project-detail-subject-actions">
+
+            <button className="header__icon-btn" title="Print" onClick={() => window.print()}><Printer size={20} /></button>
+
+            {project.liveDemo && <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="header__icon-btn" title="Open in new window"><ExternalLink size={20} /></a>}
+
+          </div>
+
+        </div>
+
+
+
+        <div className="project-detail-sender-block">
+
+          <div className="sender-avatar">
+
+            <img src="/DP.jpg" alt="Sanju Kumar Jha" />
+
+          </div>
+
+          <div className="sender-info">
+
+            <div className="sender-info__main">
+
+              <span className="sender-name">Sanju Kumar Jha</span>
+
+              <span className="sender-email">&lt;rjriva00@gmail.com&gt;</span>
+
+            </div>
+
+            <div className="sender-recipient">to me</div>
+
+          </div>
+
+          <div className="sender-actions">
+
+            <span className="sender-date">{project.year}</span>
+
+            <button onClick={handleStarClick} className="header__icon-btn" title="Star"><Star size={20} fill={project.isStarred ? 'currentColor' : 'none'} className={project.isStarred ? 'starred' : ''} /></button>
+
+            <button onClick={handleReplyClick} className="header__icon-btn" title="Reply"><CornerUpLeft size={20} /></button>
+
+            <div className="more-options-container" ref={senderMenuRef}>
+
+              <button className="header__icon-btn" title="More" onClick={() => setIsSenderMenuOpen(p => !p)}>
+
+                <MoreVertical size={20} />
+
+              </button>
+
+              {isSenderMenuOpen && (
+
+                <div className="header__dropdown">
+
+                  <button className="header__dropdown-item">
+
+                    <Flag size={16} /> Report this project
+
+                  </button>
+
+                </div>
+
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <div className="project-detail-body-content">
+
+          <p>{project.description}</p>
+
+          <div className="project-detail__section"><h3>Key Features</h3><ul>{project.features.map((feature, index) => <li key={index}>{feature}</li>)}</ul></div>
+
+          <div className="project-detail__section"><h3>Technologies Used</h3><div className="tech-tags">{project.technologies.map((tech, index) => <span key={index} className="tech-tag">{tech}</span>)}</div></div>
+
+          <div className="project-detail__section"><h3>Challenges & Solutions</h3><p>{project.challenges}</p></div>
+
+          
+
+          {project.screenshots && project.screenshots.length > 0 && (
+
+            <div className="project-detail__section project-detail__section--attachments">
+
+              <div className="attachments-header">
+
+                <h3><Paperclip size={16} /> {project.screenshots.length} Screenshots</h3>
+
+                <span className="scanned-by-text">Scanned by Smail <Info size={14} /></span>
+
+              </div>
+
+              <div className="attachments-grid">
+
+                {project.screenshots.map((screenshot, index) => (
+
+                  <button 
+
+                    key={index} 
+
+                    className="attachment-thumbnail" 
+
+                    onClick={(e) => openLightbox(index, e)}
+
+                    ref={(el) => (thumbnailRefs.current[index] = el)} // Attach ref
+
+                  >
+
+                    <img src={screenshot} alt={`Screenshot ${index + 1} of ${project.title}`} />
+
+                    <a href={screenshot} download className="attachment-download-btn" onClick={(e) => e.stopPropagation()} title="Download Screenshot">
+
+                      <Download size={18} />
+
+                    </a>
+
+                  </button>
+
+                ))}
+
+              </div>
+
+            </div>
+
+          )}
+
+
+
+          {(project.liveDemo || project.github) && (
+
+            <div className="project-detail__section project-detail__section--links">
+
+              <h3>Links</h3>
+
+              <div className="attachment-buttons">
+
+                {project.liveDemo && <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="btn"><ExternalLink size={16} /> Live Demo</a>}
+
+                {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn"><Github size={16} /> View Code</a>}
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
+
+
+
+      {ReactDOM.createPortal(
+
+        lightboxJsx,
+
+        document.getElementById('modal-root')!
+
+      )}
+
+    </div>
+
+  );
+
+};
+
+
+
+export default ProjectDetail;          this is the code of projects.tsx            import React from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
+import { X } from 'lucide-react';
+
+import ProjectList from '../components/ProjectList';
+
+import { useProjects } from '../contexts/ProjectContext';
+
+
+
+const Projects: React.FC = () => {
+
+  const navigate = useNavigate();
+
+  // Get projects and notification state from the context
+
+  const { projects, notification, hideNotification } = useProjects();
+
+
+
+  // Filter out any projects that have been archived
+
+  const activeProjects = projects.filter(p => !p.isArchived);
+
+
+
+  const handleProjectClick = (projectId: string) => {
+
+    navigate(`/project/${projectId}`);
+
+  };
+
+
+
+  return (
+
+    <>
+
+      {/* Conditionally render the notification toast at the bottom */}
+
+      {notification && (
+
+        <div className="notification-toast">
+
+          <span>{notification.message}</span>
+
+          {notification.action && (
+
+            <button 
+
+              onClick={notification.action.callback} 
+
+              className="notification-toast__undo"
+
+            >
+
+              {notification.action.label}
+
+            </button>
+
+          )}
+
+          <button 
+
+            onClick={hideNotification} 
+
+            className="notification-toast__close" 
+
+            aria-label="Close notification"
+
+          >
+
+            <X size={18} />
+
+          </button>
+
+        </div>
+
+      )}
+
+      
+
+      {/* Pass only the active (non-archived) projects to the list */}
+
+      <ProjectList projects={activeProjects} onProjectClick={handleProjectClick} />
+
+    </>
+
+  );
+
+};
+
+
+
+export default Projects;
+
+ Make this website completely Responsive According to You but make this website look more beautiful and more attractive in mobile and also  give me complete code and don't give me code in canvas give me code here only. Make this website completly responsive 

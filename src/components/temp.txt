@@ -1,0 +1,2404 @@
+:root {
+  /* Light theme colors */
+  --primary-blue: #0b57d0;
+  --primary-blue-hover: #1557b0;
+  --active-nav-bg: #c2e7ff;
+  --active-nav-text: #001d35;
+  
+  --background: #ffffff;
+  --surface: #f6f8fc; /* Slightly off-white like Gmail */
+  --surface-variant: #e8eaed;
+  --outline: #e0e0e0;
+  
+  --text-primary: #1f1f1f;
+  --text-secondary: #3e444c;
+  --text-tertiary: #80868b;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3);
+  --shadow-md: 0 1px 3px 1px rgba(60,64,67,.15);
+  
+  --font-family: 'Roboto', Arial, sans-serif;
+  
+  --header-height: 64px;
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 80px;
+}
+
+[data-theme="dark"] {
+  --primary-blue: #8ab4f8;
+  --active-nav-bg: #202124;
+  --active-nav-text: #d2e3fc;
+
+  --background: #121212;
+  --surface: #1e1e1e;
+  --surface-variant: #303030;
+  --outline: #5f6368;
+  
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-tertiary: #80868b;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,.3);
+  --shadow-md: 0 1px 3px 1px rgba(0,0,0,.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* --- Layout --- */
+.layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.layout__body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--surface);
+}
+.layout__main {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--background);
+}
+
+/* --- Header --- */
+/* --- Header --- */
+.header {
+  height: var(--header-height);
+  background-color: var(--background); /* Changed from --surface */
+  box-shadow: none; /* Ensure shadow is removed */
+  border-bottom: none; /* Ensure border is removed */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.header__menu-btn {
+  padding: 8px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: background-color 0.2s ease;
+}
+.header__menu-btn:hover {
+  background-color: var(--surface-variant);
+}
+.header__logo-text {
+  font-size: 22px;
+  color: var(--text-secondary);
+}
+.header__center {
+  flex: 1;
+  max-width: 720px;
+}
+.header__search-container {
+  display: flex;
+  align-items: center;
+  background-color: #eaf1fb;
+  border-radius: 24px;
+  padding: 0 16px;
+  height: 48px;
+}
+.header__search-container:focus-within {
+  background-color: var(--background);
+  box-shadow: var(--shadow-md);
+}
+.header__search-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  /* This controls the space between the icon and the text */
+  margin-right: 8px; 
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.header__icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  border: none; /* Ensure buttons have no border */
+  background: none; /* Ensure buttons have no background */
+  cursor: pointer;
+}
+.header__icon-btn:hover {
+  background-color: var(--surface-variant);
+}
+.header__profile-btn {
+  padding: 4px;
+  border-radius: 50%;
+}
+.header__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--surface);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease-in-out;
+  overflow: hidden;
+}
+.sidebar--collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+.sidebar__compose {
+  padding: 0 12px 16px;
+}
+.sidebar__compose-btn {
+  height: 56px;
+  width: auto;
+  min-width: 56px;
+  background-color: #c2e7ff;
+  color: #001d35;
+  border-radius: 16px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px 0 16px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+}
+.sidebar__compose-btn:hover {
+  box-shadow: var(--shadow-md);
+  background-color: #b3e0ff;
+}
+.sidebar--collapsed .sidebar__compose-btn {
+  width: 56px;
+  border-radius: 16px;
+  justify-content: center;
+  padding: 0;
+}
+.sidebar__nav {
+  padding-right: 12px;
+}
+.sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 26px;
+  height: 32px;
+  border-radius: 0 16px 16px 0;
+  color: var(--text-primary);
+  font-weight: 400;
+  transition: all 0.1s ease;
+  text-decoration: none;
+}
+.sidebar__nav-item:hover {
+  background-color: var(--surface-variant);
+}
+.sidebar__nav-item--active {
+  background-color: var(--active-nav-bg);
+  color: var(--active-nav-text);
+  font-weight: 700;
+}
+.sidebar--collapsed .sidebar__nav-item {
+  margin-left: 12px;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  justify-content: center;
+}
+.sidebar--collapsed .sidebar__nav-item--active {
+  border-radius: 50%;
+}
+
+
+
+/* --- Main Content Area --- */
+.inbox-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+}
+.inbox-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.inbox-toolbar__right .pagination-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.page__header {
+  padding: 0 16px;
+  border-bottom: 1px solid var(--outline);
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  min-width: 200px;
+}
+.tab:hover {
+  background-color: var(--surface-variant);
+  border-radius: 4px 4px 0 0;
+}
+.tab.active {
+  color: var(--primary-blue);
+  border-bottom-color: var(--primary-blue);
+}
+.tab.active:hover {
+  background-color: transparent;
+}
+.tab__icon {
+  flex-shrink: 0;
+}
+.tab__content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tab__title {
+  font-weight: 500;
+}
+.tab.active .tab__title {
+  font-weight: 700;
+}
+.tab__subtitle {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Project List (Email List) --- */
+.project-list {
+  background-color: var(--background);
+}
+.project-list__item {
+  display: grid;
+  grid-template-columns: auto 180px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--outline);
+  cursor: pointer;
+  transition: box-shadow 0.1s ease, background-color 0.1s ease;
+  position: relative;
+}
+.project-list__item:hover {
+  background-color: var(--surface-variant); 
+  box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  z-index: 1;
+}
+.project-list__item.selected {
+  background-color: #c2e7ff;
+}
+.project-list__item.unread .project-list__sender,
+.project-list__item.unread .project-list__subject {
+  font-weight: bold;
+  color: var(--text-primary);
+}
+.project-list__sender {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-list__subject {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-list__subject-preview {
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+.project-list__date {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+  padding-right: 16px;
+}
+.project-list__actions-left {
+  display: flex;
+  gap: 8px;
+  color: var(--text-tertiary);
+}
+.action-btn {
+  color: inherit;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.action-btn .starred {
+  fill: #fbbc04;
+  color: #fbbc04;
+}
+.selected-check {
+  color: var(--primary-blue);
+}
+.project-list__hover-actions {
+  display: none;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none !important;
+  box-shadow: none !important;
+}
+.project-list__item:hover .project-list__hover-actions {
+  display: flex; 
+}
+.project-list__item:hover .project-list__date {
+  display: none;
+}
+
+
+/* --- Project Detail (Email View) --- */
+.project-detail {
+  padding: 0 24px 24px 24px;
+}
+.project-detail-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+}
+.project-detail-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--outline);
+  margin: 0 8px;
+}
+.project-detail-subject-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+.project-detail__title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+.project-detail-subject-actions {
+  display: flex;
+  gap: 8px;
+}
+.project-detail-sender-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 24px;
+}
+.sender-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.sender-info {
+  flex-grow: 1;
+}
+.sender-info__main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sender-name {
+  font-weight: 500;
+}
+.sender-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.sender-recipient {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.sender-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+.sender-date {
+  font-size: 12px;
+}
+.project-detail-body-content {
+  line-height: 1.6;
+  padding-left: 52px;
+}
+.project-detail-body-content p {
+  margin-bottom: 16px;
+}
+.project-detail__section {
+  margin-top: 24px;
+}
+.project-detail__section h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+.project-detail__section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.tech-tag {
+  background-color: var(--surface-variant);
+  color: var(--text-primary);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+}
+.project-detail__attachments {
+  padding: 16px;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  margin-top: 24px;
+}
+.project-detail__attachments h3 {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.attachment-buttons {
+  display: flex;
+  gap: 12px;
+}
+.project-detail-footer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-left: 52px;
+}
+
+/* --- Generic Page Styles (for About, Contact, etc.) --- */
+.email-view {
+  padding: 24px;
+}
+.email-view__subject {
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+.email-view__content {
+  line-height: 1.6;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--outline);
+  background-color: var(--surface);
+}
+
+.btn:hover {
+  background-color: var(--surface-variant);
+}
+
+
+/* --- NEW STYLES ADDED FOR DROPDOWN AND NOTIFICATION --- */
+
+/* Container for the "more options" button to position the menu */
+.more-options-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* The dropdown menu itself */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 8px 0;
+  z-index: 100;
+  width: 250px;
+  margin-top: 4px;
+}
+
+/* Individual items in the dropdown */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #3c4043;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f4;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+}
+
+/* Style for the notification banner */
+.notification-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-size: 14px;
+}
+
+/* Add this new style to the end of your file */
+
+.dropdown-item-disabled {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* --- New/Modified Styles for About Page (Gmail-like) --- */
+
+/* Base container for the About page, similar to email-view but for About */
+.about-email-view {
+  background-color: var(--bg-primary); /* Light background for the content area */
+  border-radius: 8px;
+  box-shadow: var(--shadow-small);
+  margin: 20px;
+  max-width: 900px; /* Constrain width for better readability */
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden; /* Ensures borders/shadows are contained */
+}
+
+/* Header for the About view */
+.about-email-view__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Align subject group and picture at the top */
+  padding: 24px 30px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary); /* Slightly different background for header */
+}
+
+.about-email-view__subject-group {
+  flex-grow: 1;
+  margin-right: 20px; /* Space between subject and profile pic */
+}
+
+.about-email-view__subject {
+  font-size: 1.8rem;
+  font-weight: 400; /* Lighter font weight for modern look */
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.about-email-view__meta {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.about-email-view__from {
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+.about-email-view__to {
+  font-style: italic;
+}
+
+/* Profile Picture Styling */
+.about-profile-pic-container {
+  flex-shrink: 0; /* Prevents picture from shrinking */
+  width: 70px; /* Size of the container */
+  height: 70px;
+  border-radius: 50%; /* Makes it circular */
+  overflow: hidden; /* Ensures image stays within circle */
+  border: 2px solid var(--border-color); /* Subtle border */
+  box-shadow: var(--shadow-xsmall);
+  background-color: var(--bg-tertiary); /* Placeholder background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures image covers the circle */
+}
+
+/* Content Area */
+.about-email-view__content {
+  padding: 30px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.about-section {
+  margin-bottom: 30px; /* Space between content sections */
+}
+
+.about-section p {
+  margin-bottom: 1em;
+}
+
+/* Highlights Grid */
+.about-highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between cards */
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.highlight-card {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow-xsmall);
+  border: 1px solid var(--border-color);
+}
+
+.highlight-card h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+}
+
+.highlight-card ul {
+  list-style: none; /* Remove default list bullets */
+  padding: 0;
+  margin: 0;
+}
+
+.highlight-card li {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.highlight-card li::before {
+  content: '•'; /* Custom bullet point */
+  color: var(--primary-color); /* Match primary theme color */
+  font-size: 1.2em;
+  line-height: 1;
+  margin-right: 8px;
+}
+
+.highlight-icon {
+  color: var(--primary-color); /* Icon color */
+}
+
+.about-signature {
+  margin-top: 40px;
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .about-email-view__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .about-profile-pic-container {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .about-email-view__subject-group {
+    margin-right: 0;
+  }
+}
+
+/* --- Styles for Photo Modal --- */
+
+.photo-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay for focus */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(4px); /* Optional: blur background */
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease; /* Fade-in animation */
+}
+
+.photo-modal-content {
+  border-radius: 4px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default; /* Default cursor for the content box */
+  animation: zoomIn 0.3s ease; /* Zoom-in animation */
+}
+
+.photo-modal-content img {
+  display: block; /* Removes extra space below image */
+  max-width: 100%;
+  max-height: calc(90vh - 16px); /* Ensure image fits within padding */
+  border-radius: 2px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --- New Styles for Experience Page --- */
+
+.experience-view {
+  padding: 24px 32px;
+  max-width: 900px;
+  margin: 20px auto;
+  background-color: var(--background);
+}
+
+.experience-view__header {
+  border-bottom: 1px solid var(--outline);
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+}
+
+.experience-view__subject {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.experience-view__meta {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.experience-view__from {
+  font-weight: 700;
+}
+
+.experience-view__to {
+  margin-left: 8px;
+}
+
+/* Timeline Styles */
+.timeline {
+  position: relative;
+  padding-left: 40px; /* Space for the timeline line and dots */
+}
+
+/* The vertical line of the timeline */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 19px; /* Centered on the dot's position */
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background-color: var(--surface-variant);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+/* The dot on the timeline */
+.timeline-dot {
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  border: 3px solid var(--surface);
+}
+
+.timeline-content {
+  background-color: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s ease;
+}
+
+.timeline-content:hover {
+  box-shadow: var(--shadow-md);
+  border-color: #cdd3da;
+}
+
+.timeline-header {
+  margin-bottom: 16px;
+}
+
+.timeline-header p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.timeline-position {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeline-responsibilities {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.timeline-responsibilities li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.timeline-check-icon {
+  flex-shrink: 0;
+  color: var(--primary-blue);
+  margin-top: 3px;
+}
+
+/* --- New Styles for Skills Page --- */
+
+.skills-view {
+  padding: 24px 32px;
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: var(--background);
+}
+
+.skills-view__header {
+  border-bottom: 1px solid var(--outline);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.skills-view__subject {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.skills-view__meta {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.skills-view__from {
+  font-weight: 700;
+}
+
+.skills-view__to {
+  margin-left: 8px;
+}
+
+.skills-intro {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 800px;
+  margin-bottom: 32px;
+}
+
+/* Main Grid for Skill Cards */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.skill-card {
+  background-color: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s ease-in-out;
+}
+
+.skill-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: #cdd3da;
+}
+
+.skill-card__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.skill-card__icon {
+  color: var(--primary-blue);
+  flex-shrink: 0;
+}
+
+/* Container for the skill tags */
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Individual skill tags */
+.skill-tag {
+  background-color: var(--surface-variant);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 20px;
+  line-height: 1.4;
+}
+
+.skills-note {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--outline);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* --- New Styles for Contact Page --- */
+
+.contact-view {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px;
+  width: 100%;
+  min-height: 100%;
+}
+
+.compose-card {
+  width: 100%;
+  max-width: 780px;
+  background-color: var(--background);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.compose-header {
+  background-color: var(--surface-variant);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--outline);
+}
+
+.compose-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.compose-field {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--outline);
+}
+
+.compose-field span {
+  color: var(--text-secondary);
+  margin-right: 12px;
+  font-size: 14px;
+}
+
+.compose-field input {
+  flex-grow: 1;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.compose-field input:disabled {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.compose-textarea {
+  flex-grow: 1;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  padding: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 200px;
+  font-family: var(--font-family);
+}
+
+.compose-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid var(--outline);
+  background-color: var(--surface);
+}
+
+.compose-send-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.compose-send-btn:hover {
+  background-color: var(--primary-blue-hover);
+}
+
+.compose-social-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.compose-social-links a {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.compose-social-links a:hover {
+  color: var(--primary-blue);
+}
+
+/* --- Header --- */
+.header {
+  height: var(--header-height);
+  background-color: var(--surface);
+  /* The border is removed and replaced with a subtle shadow for a modern look */
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+
+
+.header__logo-text {
+  font-size: 22px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.header__center {
+  flex: 1;
+  display: flex;
+  padding: 0px;
+}
+
+.header__search {
+  width: 100%;
+  max-width: px;
+  background-color: var(--surface-variant);
+  border-radius: 24px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.header__search:focus-within {
+  background-color: var(--background);
+  box-shadow: var(--shadow-md);
+}
+
+
+.header__search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #444746;
+  padding: 0;
+  width: 100%;
+  font-color: var(--surface-variant);
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header__icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.header__icon-btn:hover {
+  background-color: var(--surface-variant);
+}
+
+.header__search-btn--mobile {
+  display: none; /* Hidden by default */
+}
+
+.header__profile-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.header__profile-btn:hover {
+  border-color: rgba(0,0,0,0.1);
+}
+
+.header__avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+
+
+.header__dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 12px;
+  text-decoration: none;
+  white-space: nowrap; /* Add this line */
+}
+
+.header__dropdown-item:hover {
+  background-color: var(--surface-variant);
+}
+
+.header__dropdown-item--no-hover:hover {
+  background-color: transparent;
+}
+
+.header__dropdown-divider {
+  height: 1px;
+  background-color: var(--outline);
+  margin: 8px 0;
+}
+
+/* Profile Dropdown Specific */
+.header__dropdown--profile {
+  width: 320px;
+}
+
+.header__profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.header__profile-dropdown-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+.header__profile-info strong {
+  font-size: 16px;
+}
+.header__profile-info span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Toggle Switch for Theme */
+.toggle-switch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: background-color 0.2s;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--primary-blue);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(16px);
+}
+
+
+/* --- Responsive Header --- */
+@media (max-width: 768px) {
+  .header__center {
+    display: none; /* Hide search bar in the middle */
+  }
+  .header__logo-text {
+    display: none; /* Hide logo text */
+  }
+  .header__search-btn--mobile {
+    display: flex; /* Show search icon on the right */
+  }
+  .header__right {
+    gap: 4px;
+  }
+}
+
+/* --- Header Dropdown for Apps (New Styles) --- */
+
+/* Adjust dropdown size and padding for the apps grid */
+.header__dropdown--apps {
+  width: 280px; /* Adjust width to fit 3 columns */
+  padding: 16px; /* Padding for the grid */
+  display: flex; /* Use flexbox to center grid if it's smaller */
+  justify-content: center;
+  align-items: center;
+  right: -20px; /* Adjust positioning slightly to align with button */
+  /* This ensures the dropdown starts aligned with the apps button and goes left */
+  transform-origin: top right; 
+  animation: dropdownFadeIn 0.2s ease-out; /* Add animation */
+}
+
+.header__apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 12px; /* Space between grid items */
+  width: 100%; /* Take full width of its parent */
+}
+
+.app-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0; /* Vertical padding */
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+  min-height: 70px; /* Ensure consistent height for items */
+}
+
+.app-grid-item:hover {
+  background-color: var(--surface-variant);
+}
+
+.app-grid-icon {
+  width: 38px; /* Size of the logo */
+  height: 38px;
+  object-fit: contain; /* Ensures logo fits without distortion */
+  margin-bottom: 6px;
+}
+
+.app-grid-label {
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Optional: Animation for dropdowns (if not already present) */
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Adjust header__dropdown-container for positioning if needed */
+.header__dropdown-container {
+  position: relative;
+  /* Ensure a base z-index for the container itself if needed */
+  z-index: 10; 
+}
+
+/* Ensure general dropdown styles apply, but apps specific overrides take precedence */
+.header__dropdown {
+  position: absolute;
+  top: calc(100% + 8px); /* Position below the button */
+  right: 0; /* Align to the right edge of the button */
+  background-color: var(--background);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--outline);
+  overflow: hidden;
+  z-index: 20;
+  padding: 8px 0; /* Default padding for other dropdowns */
+}
+
+/* --- New/Updated Styles for Settings Dropdown --- */
+
+.header__dropdown--settings {
+  width: 320px;
+  padding: 0; /* Remove default padding to use sections */
+  transform-origin: top right;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.settings-header {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  border-bottom: 1px solid var(--outline);
+}
+
+.settings-section {
+  padding: 16px;
+}
+
+.settings-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.theme-options-card {
+  margin-top: 8px;
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.theme-options-card__header {
+  padding: 12px 16px;
+}
+
+.theme-options-card__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.theme-options-card__subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.theme-options-buttons {
+  display: flex;
+  padding: 4px;
+  background-color: var(--surface-variant);
+  border-top: 1px solid var(--outline);
+}
+
+.theme-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-option.active {
+  background-color: var(--background);
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.3);
+}
+
+/* Optional: Animation for dropdowns (if not already present) */
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-5px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Find the existing .header__profile-info rule and update it */
+.header__profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer; /* Make it look clickable */
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+/* Add this new rule for the hover effect */
+.header__profile-info:hover {
+  background-color: var(--surface-variant);
+}
+
+/* Add this corrected rule inside the --- Header --- section of your CSS */
+
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* This controls the space between the menu icon and your logo */
+}
+
+/* Find this rule in your globals.css file and update the gap */
+
+/* This rule should be updated or added */
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between logo image and text */
+  text-decoration: none; /* Removes underline from the link */
+}
+
+/* Add this new rule for the logo image */
+.header__logo-img {
+  height: 24px; /* This gives the image a visible height */
+  width: 30px;
+}
+
+.header__logo-text {
+  font-size: 22px;
+  
+  white-space: nowrap;
+}
+
+/* --- New Styles for Screenshots & Lightbox --- */
+
+/* Grid for thumbnail previews */
+.screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.screenshot-thumbnail {
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  padding: 8px;
+  background-color: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  aspect-ratio: 16 / 9; /* Maintain a widescreen aspect ratio */
+  overflow: hidden;
+}
+
+.screenshot-thumbnail:hover {
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.screenshot-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* src/styles/globals.css */
+
+/* ... (keep all your existing CSS above this) ... */
+
+
+/* --- New Styles for Attachments Section (Matching Gmail UI) --- */
+
+/* Wrapper for the entire attachments section, similar to project-detail__attachments */
+.project-detail__section--attachments {
+  /* No specific styles needed here other than margin if it's already a section */
+  margin-top: 24px; /* Ensure spacing from previous content */
+}
+
+/* Header for the attachments section */
+.attachments-header {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space between title and "Scanned by Smail" */
+  margin-bottom: 16px; /* Space below the header */
+  color: var(--text-primary);
+}
+
+.attachments-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  font-size: 16px; /* Adjust font size if needed */
+  font-weight: 500; /* More subtle than bold */
+  margin: 0; /* Remove default h3 margin */
+}
+
+.scanned-by-text {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Space between text and info icon */
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Grid for the attachment thumbnails */
+.attachments-grid {
+  display: flex; /* Use flexbox for the horizontal scroll and spacing */
+  flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+  gap: 16px; /* Space between attachment items */
+}
+
+/* Individual attachment thumbnail */
+/* Add these new/updated rules to your globals.css file */
+
+/* Ensure the parent thumbnail is positioned relatively */
+.attachment-thumbnail {
+  position: relative; /* This is crucial for positioning the download button */
+  width: 180px;
+  height: 120px;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* The download button itself */
+.attachment-download-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  
+  /* Appearance */
+  background-color: rgba(32, 33, 36, 0.7); /* Dark, semi-transparent background */
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Hide by default and set up transition */
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Show the download button when hovering over the thumbnail */
+.attachment-thumbnail:hover .attachment-download-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Optional: Add a hover effect to the button itself */
+.attachment-download-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.attachment-thumbnail:hover {
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 1px 2px rgba(60,64,67,.15); /* Subtle shadow on hover */
+  border-color: rgba(60,64,67,0.1); /* Slight border change on hover */
+}
+
+.attachment-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the entire area */
+}
+
+/* Specific styling for PDF thumbnails, if you introduce them */
+.pdf-thumbnail {
+  background-color: #f0f0f0; /* Light gray background for PDFs */
+  justify-content: space-between; /* Space content vertically */
+  padding: 10px;
+}
+
+.pdf-thumbnail .pdf-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.attachment-filename {
+  font-size: 12px;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0 5px;
+  margin-top: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.attachment-corner-flag {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 20px 20px; /* Creates the triangle shape */
+  border-color: transparent transparent #c00 transparent; /* Red triangle */
+  transform: rotate(0deg); /* Adjust rotation if needed */
+}
+
+
+/* --- Lightbox styles (from previous update, just ensure they are present) --- */
+/* Find this rule in your globals.css file and update the z-index */
+
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Increased from 1000 to ensure it's on top of everything */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  color: white;
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+}
+
+.lightbox-prev {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+}
+
+.lightbox-next {
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+/* --- New Styles for Printing --- */
+
+@media print {
+  /* Hide elements that shouldn't be printed */
+  .header,
+  .sidebar,
+  .project-detail-toolbar,
+  .sender-actions,
+  .project-detail-subject-actions,
+  .attachment-buttons,
+  .inbox-toolbar,
+  .tabs {
+    display: none !important;
+  }
+
+  /* Ensure the main content takes up the full width */
+  .layout__body,
+  .layout__main,
+  .page {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Reset padding and margins for a cleaner print layout */
+  .project-detail, .project-detail-body-content {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Ensure attachments/screenshots are still visible but not interactive */
+  .project-detail__attachments,
+  .project-detail__section--attachments {
+    border: none;
+    box-shadow: none;
+    padding: 16px 0;
+  }
+  
+  .screenshots-grid,
+  .attachments-grid {
+      page-break-inside: avoid; /* Try to prevent attachments from splitting across pages */
+  }
+
+  /* Ensure text is readable */
+  body, .project-detail {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+  
+  /* Remove shadows from cards for cleaner printing */
+  .timeline-content, .skill-card, .compose-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* Find and replace the existing .sender-avatar rule with these two */
+
+.sender-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--surface-variant); /* Fallback color */
+  flex-shrink: 0;
+  overflow: hidden; /* This is important to clip the image */
+}
+
+.sender-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This prevents the image from stretching */
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form-status-error {
+  color: #d93025;
+  font-size: 13px;
+  padding: 0 20px 10px;
+  text-align: left;
+}
+
+/* --- New Styles for Notification Toast --- */
+.notification-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background-color: #323232;
+  color: #f1f1f1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1001;
+  font-size: 14px;
+  animation: slideInUp 0.3s ease-out;
+}
+
+.notification-toast__undo {
+  background: none;
+  border: none;
+  color: #8ab4f8; /* A nice blue color for the action */
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.notification-toast__undo:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-toast__close {
+  background: none;
+  border: none;
+  color: #9aa0a6;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+.notification-toast__close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* --- New/Updated Styles for Search Bar --- */
+
+.header__center {
+  position: absolute;
+  left: 44%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 720px;
+}
+
+/* Add an active state to the search container */
+.header__search.active {
+  background-color: var(--background);
+  box-shadow: var(--shadow-md);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Clear button for the search input */
+.header__search-clear-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  margin-right: -4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.header__search-clear-btn:hover {
+  background-color: var(--surface-variant);
+}
+
+
+/* --- Styles for Search Results Dropdown --- */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--background);
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: var(--shadow-md);
+  border-top: 1px solid var(--outline);
+  z-index: 15;
+  padding: 8px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+  background-color: var(--surface-variant);
+}
+
+.search-result-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.search-result-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item.no-results {
+  color: var(--text-secondary);
+  font-style: italic;
+  cursor: default;
+}
+
+.search-result-item.no-results:hover {
+  background-color: transparent;
+}
+
+.header {
+  border-bottom: none;
+  box-shadow: none;
+}
+
+/* --- Core Layout and Curve --- */
+
+/* Sidebar styling - ensure no conflicting borders/shadows at the top right */
+.sidebar {
+  width: var(--sidebar-width);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease-in-out;
+  overflow: hidden;
+  /* Ensure no radius here */
+  border-top-right-radius: 0; 
+  box-shadow: none; /* Make sure it doesn't cast a shadow that interferes */
+}
+
+/* Main content area - This is where the curve and the top border/shadow should be */
+.layout__main {
+  flex: 1;
+  overflow-y: auto; /* Allows content to scroll if it overflows */
+  background-color: var(--background);
+  border-top-left-radius: 24px; /* Apply the curve here */
+  /* This creates the bottom line *after* the curve, replicating the Gmail tab bar effect */
+  box-shadow: inset 0 1px 0 0 var(--outline); /* Use an inner shadow for the line */
+  position: relative; /* Needed if z-index becomes an issue for overlapping */
+  z-index: 10; /* Ensures it sits above the sidebar if there's any overlap */
+}
+
+/* Ensure the header doesn't have any bottom border or shadow that interferes */
+.header {
+  border-bottom: none;
+  box-shadow: none;
+  z-index: 20; /* Keep header on top */
+}
+
+/* --- Inbox Toolbar Adjustment --- */
+
+/* Remove the border from the inbox-toolbar as its parent will now handle the line */
+.inbox-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    /* REMOVE THIS LINE: border-bottom: 1px solid var(--outline); */
+    border-bottom: none; /* Explicitly set to none to override any defaults */
+    
+}
+
+/* The tabs container also needs to respect the curve, especially its top corners */
+.page__header {
+  background-color: var(--background); /* Ensure consistent background */
+  /* If you have a bottom border here too, consider removing it or moving it to layout__main */
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--outline); /* This line acts as the tab bar bottom */
+  /* Potentially add border-top-left-radius here as well if tabs are immediately at the top */
+  /* border-top-left-radius: 24px; */ 
+}
+
+/* This is a general reset for the main page wrapper if it interferes */
+.page {
+  /* No specific border-radius here, let layout__main handle it */
+  border-top-left-radius: 0; /* Make sure it doesn't interfere */
+}
+
+/* --- New/Updated Styles for Search Bar --- */
+
+/* This rule should be updated in your CSS file */
+.header__center {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start; /* Aligns the wrapper to the left */
+  padding: 0 16px;
+}
+
+/* Add this new rule for the wrapper */
+.header__search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* This rule for the search dropdown should be updated */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  width: 100%; /* Make it 100% width of the wrapper */
+  background-color: var(--background);
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: var(--shadow-md);
+  border-top: 1px solid var(--outline);
+  z-index: 15;
+  padding: 8px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Add this rule to your CSS file */
+
+.header__search-input::placeholder {
+  font-weight: 525; /* Use 500 for medium-bold or 700 for full bold */
+  color: #5E5E5E; /* Ensures the color stays consistent */
+}
+
+/* --- UPDATED Styles for Lightbox Animations --- */
+
+/* Keyframe animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes zoomIn { from { transform: scale(0.9); } to { transform: scale(1); } }
+@keyframes zoomOut { from { transform: scale(1); } to { transform: scale(0.9); } }
+
+/* Base overlay style */
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* Opening animations */
+.lightbox-overlay.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+.lightbox-overlay.fade-in .lightbox-content {
+  animation: zoomIn 0.3s ease-out forwards;
+}
+
+/* Closing animations */
+.lightbox-overlay.fade-out {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+.lightbox-overlay.fade-out .lightbox-content {
+  animation: zoomOut 0.3s ease-out forwards;
+}
+
+/* Add/update these styles in your globals.css */
+
+/* Keyframe for background fade (optional, but good for consistency) */
+@keyframes fadeInOverlay {
+  from { background-color: rgba(0, 0, 0, 0); }
+  to { background-color: rgba(0, 0, 0, 0.85); }
+}
+
+@keyframes fadeOutOverlay {
+  from { background-color: rgba(0, 0, 0, 0.85); }
+  to { background-color: rgba(0, 0, 0, 0); }
+}
+
+
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* Default final background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  
+  /* Initial state for opening animation */
+  opacity: 0; /* Overlay starts hidden */
+  pointer-events: none; /* Make it unclickable when hidden */
+  transition: opacity 0.4s ease-in-out, background-color 0.4s ease-in-out;
+}
+
+.lightbox-overlay.is-animating {
+  opacity: 1; /* Overlay becomes visible */
+  pointer-events: auto; /* Make it clickable */
+  background-color: rgba(0, 0, 0, 0.85); /* Ensure final background color */
+}
+
+/* Specific transition for the image */
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+  /* This is the key: transition for transform and opacity */
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  
+  /* Initial state will be set by inline style for the transform, opacity: 0 */
+  /* When is-animating is applied, the inline style is removed, allowing transition to default */
+}
+
+/* Lightbox controls (close, prev, next) can also transition */
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10000;
+  opacity: 0; /* Start hidden */
+}
+
+.lightbox-overlay.is-animating .lightbox-close,
+.lightbox-overlay.is-animating .lightbox-prev,
+.lightbox-overlay.is-animating .lightbox-next {
+  opacity: 1; /* Fade in controls when animating */
+  transition-delay: 0.1s; /* Slightly delay controls fade-in */
+}
+
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  color: white;
+}
+
+.lightbox-close { top: 20px; right: 20px; }
+.lightbox-prev { top: 50%; left: 20px; transform: translateY(-50%); }
+.lightbox-next { top: 50%; right: 20px; transform: translateY(-50%); }
+
